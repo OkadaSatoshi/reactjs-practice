@@ -147,7 +147,7 @@ function MoveList(props) {
         'Go to move #' + move + 'row :' +  position[0] + 'col : ' + position[1]: 'Go to start';
         return (
           <li key={move}>
-            <button onClick ={() => this.jumpTo(move)}>{desc}</button>
+            <button className={(move === this.state.stepNumber) ? 'bold' : ''} onClick ={() => this.jumpTo(move)}>{desc}</button>
           </li>
         );
       });

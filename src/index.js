@@ -19,25 +19,29 @@ function Square(props) {
       />
       );
     }
-  
     render() {
+      // 2問目
+      const renderSquareArray = [
+        [0, 1, 2],
+        [3, 4, 5],
+        [6, 7, 8]
+      ];
+      const renderSquares = renderSquareArray.map((rowData, index) => {
+        const row = rowData.map((square) => {
+          return (
+            this.renderSquare(square)
+          )
+        })
+        
+        return (
+          <div key={index} className="board-row">
+            {row}
+          </div>
+        )
+      })
       return (
         <div>
-          <div className="board-row">
-            {this.renderSquare(0)}
-            {this.renderSquare(1)}
-            {this.renderSquare(2)}
-          </div>
-          <div className="board-row">
-            {this.renderSquare(3)}
-            {this.renderSquare(4)}
-            {this.renderSquare(5)}
-          </div>
-          <div className="board-row">
-            {this.renderSquare(6)}
-            {this.renderSquare(7)}
-            {this.renderSquare(8)}
-          </div>
+          {renderSquares}
         </div>
       );
     }
@@ -49,6 +53,7 @@ function Square(props) {
       this.state = {
         history: [{
           squares: Array(9).fill(null),
+          currentSquare: null,
         }],
         stepNumber: 0,
         xIsNext: true,
@@ -65,6 +70,7 @@ function Square(props) {
       this.setState({
         history: history.concat([{
           squares: squares,
+          current: i,
         }]),
         stepNumber: history.length,
         xIsNext: !this.state.xIsNext,
@@ -76,14 +82,42 @@ function Square(props) {
         xIsNext: (step % 2) === 0,
       })
     }
+    // 一問目
+    getSquarePosition(i) {
+      return [this.getSquareRow(i), this.getSquareCol(i)];
+    }
+    getSquareRow(i) {
+      const surplus = i % 3;
+      switch (surplus) {
+        case 0:
+          return 1;
+        case 1:
+          return 2;
+        case 2:
+          return 3;
+        default:
+          break;
+      }
+    }
+    getSquareCol(i) {
+      const result = i / 3;
+      if (result < 1) {
+        return 1;
+      } else if (1 <= result && result < 2) {
+        return 2;
+      } else {
+        return 3;
+      }
+    }
     render() {
       const history = this.state.history;
       const current = history[this.state.stepNumber];
       const winner = calculateWinner(current.squares);
 
       const moves = history.map((step, move) => {
+        const position = this.getSquarePosition(step.current);
         const desc = move ?
-        'Go to move #' + move : 'Go to start';
+        'Go to move #' + move + 'row :' +  position[0] + 'col : ' + position[1]: 'Go to start';
         return (
           <li key={move}>
             <button onClick ={() => this.jumpTo(move)}>{desc}</button>

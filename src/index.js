@@ -57,6 +57,7 @@ function Square(props) {
         }],
         stepNumber: 0,
         xIsNext: true,
+        historyOrder: 'asc',
       };
     }
     handleClick(i) {
@@ -80,6 +81,11 @@ function Square(props) {
       this.setState({
         stepNumber: step,
         xIsNext: (step % 2) === 0,
+      })
+    }
+    changeOrder() {
+      this.setState({
+        historyOrder: this.state.historyOrder === 'asc' ? 'desc' : 'asc',
       })
     }
     // 一問目
@@ -125,12 +131,17 @@ function Square(props) {
         );
       });
 
+      // 3問目
+      const renderMoves = this.state.historyOrder === 'asc' ? moves : moves.reverse();
+      
       let status;
       if (winner) {
         status = 'Winner: ' + winner;
       } else {
         status = 'Next player: ' + (this.state.xIsNext ? 'X' : 'O');
       }
+      const orderStatus = this.state.historyOrder === 'asc' ? '昇順' : '降順';
+      
       return (
         <div className="game">
           <div className="game-board">
@@ -141,7 +152,8 @@ function Square(props) {
           </div>
           <div className="game-info">
             <div>{status}</div>
-            <ol>{moves}</ol>
+            <button className="order-change" onClick={() => this.changeOrder()}>{orderStatus}</button>
+            <ol>{renderMoves}</ol>
           </div>
         </div>
       );

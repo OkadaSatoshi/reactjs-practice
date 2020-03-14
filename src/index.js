@@ -4,7 +4,7 @@ import './index.css'
 
 function Square(props) {
   return (
-    <button className="square" onClick={props.onClick}>
+    <button className={`square ${props.isHilight}`} onClick={props.onClick} >
       {props.value}
     </button>
   )
@@ -27,9 +27,13 @@ function MoveList(props) {
       return (
       <Square 
         value={this.props.squares[i]}
+        isHilight={this.judgeHilight(i) ? 'isHilight' : ''}
         onClick={() => this.props.onClick(i)}
       />
       );
+    }
+    judgeHilight(index) {
+      return this.props.hilightSquare.includes(index);
     }
     render() {
       // 2問目
@@ -70,13 +74,18 @@ function MoveList(props) {
         stepNumber: 0,
         xIsNext: true,
         historyOrder: 'asc',
+        hilightSquare: null,
       };
     }
     handleClick(i) {
       const history = this.state.history.slice(0, this.state.stepNumber + 1);
       const current = history[history.length - 1];
       const squares = current.squares.slice();
-      if (calculateWinner(squares) || squares[i]) {
+      if (calculateWinner(squares)) {
+        
+        return;
+      }
+      if (squares[i]) {
         return;
       }
       squares[i] = this.state.xIsNext ? 'X' : 'O';
@@ -147,8 +156,10 @@ function MoveList(props) {
       const renderMoves = this.state.historyOrder === 'asc' ? moves : moves.reverse();
       
       let status;
+      let hilightSquare = [];
       if (winner) {
         status = 'Winner: ' + winner;
+        hilightSquare = judgeGame(current.squares);
       } else {
         status = 'Next player: ' + (this.state.xIsNext ? 'X' : 'O');
       }
@@ -159,6 +170,7 @@ function MoveList(props) {
           <div className="game-board">
             <Board 
               squares={current.squares}
+              hilightSquare={hilightSquare}
               onClick={(i) => this.handleClick(i)}
             />
           </div>
@@ -183,6 +195,14 @@ function MoveList(props) {
   );
 
   function calculateWinner(squares) {
+    const result = judgeGame(squares);
+    if (result) {
+      return squares[result[0]];
+    }
+    return null;
+  }
+
+  function judgeGame(squares) {
     const lines = [
       [0, 1, 2],
       [3, 4, 5],
@@ -196,7 +216,7 @@ function MoveList(props) {
     for (let i = 0; i < lines.length; i++) {
       const [a, b, c] = lines[i];
       if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
-        return squares[a];
+        return [a, b, c];
       }
     }
     return null;

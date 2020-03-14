@@ -9,6 +9,18 @@ function Square(props) {
     </button>
   )
 }
+// 3問目追加 liが降順になるように
+function MoveList(props) {
+    if (props.historyOrder === 'asc') {
+      return (
+        <ol>{props.renderMoves}</ol>
+        )
+    } else {
+      return (
+        <ol reversed>{props.renderMoves}</ol>
+      )
+    }
+}
   
   class Board extends React.Component {
     renderSquare(i) {
@@ -153,7 +165,10 @@ function Square(props) {
           <div className="game-info">
             <div>{status}</div>
             <button className="order-change" onClick={() => this.changeOrder()}>{orderStatus}</button>
-            <ol>{renderMoves}</ol>
+            <MoveList
+              renderMoves={renderMoves}
+              historyOrder={this.state.historyOrder}
+            />
           </div>
         </div>
       );

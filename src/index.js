@@ -160,6 +160,8 @@ function MoveList(props) {
       if (winner) {
         status = 'Winner: ' + winner;
         hilightSquare = judgeGame(current.squares);
+      } else if (!current.squares.includes(null)) {
+        status = 'draw'
       } else {
         status = 'Next player: ' + (this.state.xIsNext ? 'X' : 'O');
       }
